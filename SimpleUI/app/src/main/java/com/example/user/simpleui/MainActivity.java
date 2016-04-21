@@ -18,7 +18,7 @@ public class MainActivity extends AppCompatActivity {
     RadioGroup radioGroup; // capture RadioGroup
     String sex=""; // set default sex
     String selectedSex = "Male";
-    String name=""; // empty string
+    String name=""; // empty string for text field
     CheckBox checkBox; // capture checkbox
 
     @Override
@@ -42,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
                 {
                     click(v);
 
-                    return true;  //capture the text, if not set "tru", the text will move to next line.
+                    return true;  //capture the text, if not set "true", the text will move to next line.
                 }
                 return false;
             }
@@ -61,13 +61,13 @@ public class MainActivity extends AppCompatActivity {
         );
 
 
-        // For RadioGroup
+        // For RadioGroup, select "sex"
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener(){
             public void onCheckedChanged (RadioGroup group, int checkId){
-                if (checkId == R.id.MaleradioButton){
+                if (checkId == R.id.MaleradioButton){ // if "check" the "MaleradioButton", set "Male"
                     selectedSex = "Male";
                 }
-                else if (checkId == R.id.FemaleradioButton){
+                else if (checkId == R.id.FemaleradioButton){ // if "check" the "FemaleradioButton", set "Female"
                     selectedSex = "Female";
                 }
             }
@@ -87,7 +87,8 @@ public class MainActivity extends AppCompatActivity {
                 }
                 */
 
-                if (name != ""){
+                // the changeTextView replace above code for more check.
+                if (name != ""){ // if text field is not empty, call "changeTextView()" for check the string
                     changeTextView();
                 }
 
@@ -99,25 +100,25 @@ public class MainActivity extends AppCompatActivity {
 
     public void click(View view) //The name "click" will map to Properties: onClick  (at activity_main.xml)
     {
-        name = editText2.getText().toString();
-        //1/String text1 = editText2.getText().toString(); //".toString()" will tranlate the text to string.
+        name = editText2.getText().toString(); // get the string from if "editText" and translate the text to string and assign to variable "name".
+        //1/String text1 = editText2.getText().toString(); //".toString()" will translate the text to string.
         //2/textView2.setText("Android Class2"); // When click the button, it will change the text "Android Class2" to the id:textView
         //2/text1 = text1 + "sex:" + sex;
         //3/String text1 = name + " sex:" + sex;
         //3/textView2.setText(text1); // replace the text
         sex = selectedSex; // assign the sex to String "sex", avoid the sex been changed directly.
-        changeTextView();
+        changeTextView(); // check the checkbox
 
         editText2.setText(""); // clear the text at edit line
     }
 
-    // This function for check the text view
+    // This function for check the text view and checkbox
     public void changeTextView(){
-        if (checkBox.isChecked()){
+        if (checkBox.isChecked()){ // if enable "checkbox", hide "sex"
             String text1 = name;
             textView2.setText(text1); // replace the text
         }
-        else{
+        else{  // not enable "checkbox", show "sex"
             String text1 = name + " sex:" + sex;
             textView2.setText(text1); // replace the text
         }
