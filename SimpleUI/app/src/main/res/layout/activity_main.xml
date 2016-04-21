@@ -25,17 +25,43 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_alignParentEnd="false"
-        android:layout_below="@+id/editText"
         android:enabled="true"
-        android:onClick="click" />
+        android:onClick="click"
+        android:layout_below="@+id/editText" />
 
     <EditText
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:id="@+id/editText"
+        android:layout_marginTop="15dp"
+        android:text="NTU NCTU"
+        android:singleLine="true"
         android:layout_below="@+id/textView"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+
+    <RadioGroup
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_marginTop="32dp"
-        android:text="NTU NCTU" />
+        android:orientation="horizontal"
+        android:layout_below="@+id/button">
+
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Male"
+            android:id="@+id/MaleradioButton"
+            android:checked="true" />
+
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Female"
+            android:id="@+id/FemaleradioButton"
+            android:layout_gravity="right"
+            android:checked="true" />
+
+    </RadioGroup>
 </RelativeLayout>
