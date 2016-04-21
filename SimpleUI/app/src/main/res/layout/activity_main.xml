@@ -65,4 +65,14 @@
             android:checked="true" />
 
     </RadioGroup>
+
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Hide Sex"
+        android:id="@+id/HideCheckbox"
+        android:layout_alignBottom="@+id/button"
+        android:layout_toRightOf="@+id/button"
+        android:layout_toEndOf="@+id/button"
+        android:checked="false" />
 </RelativeLayout>
