@@ -5,21 +5,27 @@ import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
+import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
+
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
     TextView textView2; //variable name for text
     EditText editText2; // the variable name for edit
-    RadioGroup radioGroup; // capture RadioGroup, before creat the radio, need to creat the RadioGroup first.
-
+    RadioGroup radioGroup; // capture RadioGroup, before create the radio, need to create the RadioGroup first.
+    ArrayList<String> orders;
     String drinkName = "black tea"; //set default sex
     String note=""; // empty string for text field
     CheckBox checkBox; // capture checkbox
+
+    ListView listView; //capture listview
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +45,8 @@ public class MainActivity extends AppCompatActivity {
         
         // capture the change for "hide" enable/disable
         checkBox = (CheckBox)findViewById(R.id.HideCheckbox); 
+        listView = (ListView) findViewById(R.id.listView);
+        orders = new ArrayList<>(); // capture order list
 
         // These code for real keyboard, detect the action from "Enter"
         // onKeyListener only can detect the "Enter" on the Keyboard, it cannot detect the virtual keyboard on the phone or pad (virtual device)
@@ -95,14 +103,24 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+
+    //set the text to list
+    void setupListView(){
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, orders);
+        listView. setAdapter(adapter);
+    }
+
     public void click(View view) //The name "click" will map to Properties: onClick  (at activity_main.xml)
     {
         note = editText2.getText().toString(); // get the string from if "editText" and translate the text to string format and assign to variable "note".
 
         String text = note;
         //changeTextView(); // check the checkbox
+        textView2.setText(text);
+        orders.add(text);
 
         editText2.setText(""); // clear the text at edit line
+        setupListView();
     }
 
 
