@@ -11,6 +11,7 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -26,6 +27,7 @@ public class MainActivity extends AppCompatActivity {
     CheckBox checkBox; // capture checkbox
 
     ListView listView; //capture listview
+    Spinner spinner;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,24 +48,24 @@ public class MainActivity extends AppCompatActivity {
         // capture the change for "hide" enable/disable
         checkBox = (CheckBox)findViewById(R.id.HideCheckbox); 
         listView = (ListView) findViewById(R.id.listView);
+        spinner = (Spinner) findViewById(R.id.spinner);
+
         orders = new ArrayList<>(); //4/25: capture order list
 
         // 4/20:These code for real keyboard, detect the action from "Enter"
         // 4/20:onKeyListener only can detect the "Enter" on the Keyboard, it cannot detect the virtual keyboard on the phone or pad (virtual device)
-        editText2.setOnKeyListener(new View.OnKeyListener() 
-        {
-            public boolean onKey(View v, int keyCode, KeyEvent event)
-            {
+        editText2.setOnKeyListener(new View.OnKeyListener() {
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
                 // need to check the ACTION_DOWN for finish the key type
                 // Also need to check the KEYCODE_ENTER to detect the "Enter"
                 if (keyCode == KeyEvent.KEYCODE_ENTER && event.getAction() == KeyEvent.ACTION_DOWN) //"KEYCODE_ENTER" for detect the "Enter", "ACTION_DONE" for detect the press "key"(down then up)
                 {
                     // call "click()" function, to get the string, sex and display the string we type.
                     click(v);
-                    
+
                     // For capture the text we sent and not move to next line.
                     // If not set "true", the text will send out and move to next line.
-                    return true;  
+                    return true;
                 }
                 return false;
             }
@@ -98,8 +100,8 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
-
+        setupListView();
+        setupSpinner();
     }
 
     //4/25: delete check box
@@ -109,6 +111,12 @@ public class MainActivity extends AppCompatActivity {
         listView. setAdapter(adapter);
     }
 
+    void setupSpinner(){
+        String[] data = getResources().getStringArray(R.array.storeInfo);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String> (this, android.R.layout.simple_spinner_dropdown_item,data);
+
+        spinner.setAdapter(adapter);
+    }
 
     public void click(View view) //The name "click" will map to Properties: onClick  (at activity_main.xml)
     {
@@ -121,7 +129,9 @@ public class MainActivity extends AppCompatActivity {
 
         order order = new order();
         order.drinkName = drinkName;
-        order.note = note;
+        order.note = note; //
+        order.storeInfo = (String) spinner.getSelectedItem(); // get & store the store information
+
         orders.add(order);
 
         editText2.setText(""); // clear the text at edit line

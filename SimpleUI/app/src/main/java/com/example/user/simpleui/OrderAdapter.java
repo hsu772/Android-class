@@ -44,21 +44,25 @@ public class OrderAdapter extends BaseAdapter{
 
     @Override
     // when list view before, it will call getview by each time.
+    // position: to know which item be select
+    // converView:
     public View getView(int position, View convertView, ViewGroup parent) {
 
         Holder holder;
 
-        if(convertView == null){
+        if(convertView == null){ // if converView is null, mean it's the first time to get the converView.
             convertView = inflater.inflate(R.layout.listview_item, null);
 
+            // holder to store the id information
             holder = new Holder();
 
            // TextView drinkName = (TextView) convertView.findViewById(R.id.drinkName);
            // TextView note = (TextView) convertView.findViewById(R.id.note);
             holder.drinkName = (TextView) convertView.findViewById(R.id.drinkName);
             holder.note = (TextView) convertView.findViewById(R.id.note);
+            holder.storeInfo = (TextView) convertView.findViewById(R.id.store);
 
-            convertView.setTag(holder);
+            convertView.setTag(holder); // store the id information at some place.
 
         }
         else{
@@ -68,6 +72,7 @@ public class OrderAdapter extends BaseAdapter{
 
         holder.drinkName.setText(orders.get(position).drinkName);
         holder.note.setText(orders.get(position).note);
+        holder.storeInfo.setText(orders.get(position).storeInfo);
 
         return convertView;
     }
@@ -76,5 +81,6 @@ public class OrderAdapter extends BaseAdapter{
     class Holder {
         TextView drinkName;
         TextView note;
+        TextView storeInfo;
     }
 }
