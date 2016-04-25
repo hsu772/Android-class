@@ -20,7 +20,7 @@ public class MainActivity extends AppCompatActivity {
     TextView textView2; //variable name for text
     EditText editText2; // the variable name for edit
     RadioGroup radioGroup; // capture RadioGroup, before create the radio, need to create the RadioGroup first.
-    ArrayList<String> orders;
+    ArrayList<order> orders;
     String drinkName = "black tea"; //set default sex
     String note=""; // empty string for text field
     CheckBox checkBox; // capture checkbox
@@ -46,10 +46,10 @@ public class MainActivity extends AppCompatActivity {
         // capture the change for "hide" enable/disable
         checkBox = (CheckBox)findViewById(R.id.HideCheckbox); 
         listView = (ListView) findViewById(R.id.listView);
-        orders = new ArrayList<>(); // capture order list
+        orders = new ArrayList<>(); //4/25: capture order list
 
-        // These code for real keyboard, detect the action from "Enter"
-        // onKeyListener only can detect the "Enter" on the Keyboard, it cannot detect the virtual keyboard on the phone or pad (virtual device)
+        // 4/20:These code for real keyboard, detect the action from "Enter"
+        // 4/20:onKeyListener only can detect the "Enter" on the Keyboard, it cannot detect the virtual keyboard on the phone or pad (virtual device)
         editText2.setOnKeyListener(new View.OnKeyListener() 
         {
             public boolean onKey(View v, int keyCode, KeyEvent event)
@@ -72,22 +72,21 @@ public class MainActivity extends AppCompatActivity {
         // These code for virtual keyboard, need enable "singleLine" at Properties of textEdit.
         // And the Genymotion need to enable the virtual keyboard support at tools.
         editText2.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-                                                public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 
                 /* For virtual keyboard, it only needs ot check the ACTION_DONE
                  * For keep the line in single line, it needs to enable "singleLine", at the properties.
                  * It will set the line to single when type "Enter", and it  will become "send out" text only, not move to next line.
                  */
-                                                    if (actionId == EditorInfo.IME_ACTION_DONE) {
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
 
-                                                        // call "click()" function, to get the string, sex and display the string we type.
-                                                        click(v);
-                                                        return true; //
-                                                    }
-                                                    return false;
-                                                }
-                                            }
-        );
+                    // call "click()" function, to get the string, sex and display the string we type.
+                    click(v);
+                    return true; //
+                }
+                return false;
+            }
+        });
 
 
         // For RadioGroup, select "sex"
@@ -103,12 +102,13 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-
-    //set the text to list
+    //4/25: delete check box
+    //4/25: set the text to list
     void setupListView(){
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, orders);
+        OrderAdapter adapter = new OrderAdapter(this, orders);
         listView. setAdapter(adapter);
     }
+
 
     public void click(View view) //The name "click" will map to Properties: onClick  (at activity_main.xml)
     {
@@ -117,7 +117,12 @@ public class MainActivity extends AppCompatActivity {
         String text = note;
         //changeTextView(); // check the checkbox
         textView2.setText(text);
-        orders.add(text);
+
+
+        order order = new order();
+        order.drinkName = drinkName;
+        order.note = note;
+        orders.add(order);
 
         editText2.setText(""); // clear the text at edit line
         setupListView();
