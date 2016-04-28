@@ -65,8 +65,17 @@ public class MainActivity extends AppCompatActivity {
         //S:2016.0428: share prefernce to store UI status, use to store the information of user, there is a size limitation.
         sp = getSharedPreferences("setting", Context.MODE_PRIVATE);     //"setting" is the name of dictory, MODE_PRIVATE: support R/W
         editor = sp.edit(); //like the pencile to write the content to the dictory of "setting".
+
+        //S:2016.0428: write/Read file
+        String data = Utils.readFile(this, "notes").split("\n"); // use "\n" to seperate the string.
+        //textView2.setText(Utils.readFile(this, "notes"));
+        textView2.setText(data[0]);
+        //E:2016.0428: write/Read file
+
         editText2.setText(sp.getString("editText", "")); // find the key "editText", it will response content "world".
         //E:2016.0428: share prefernce to store UI status
+
+
 
         // 4/20:These code for real keyboard, detect the action from "Enter"
         // 4/20:onKeyListener only can detect the "Enter" on the Keyboard, it cannot detect the virtual keyboard on the phone or pad (virtual device)
@@ -113,10 +122,19 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        //S:2016.0428: share prefernce to store UI status, store the radio button.
+        radioGroup.check(sp.getInt("radioGroup",R.id.blackTeaRadioButton));
+        //E:2016.0428: share prefernce to store UI status
 
         // For RadioGroup, select "sex"
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             public void onCheckedChanged(RadioGroup group, int checkId) {
+                //S:2016.0428: share prefernce to store UI status
+                editor.putInt("radioGroup", checkId);
+                editor.apply();
+                //E:2016.0428: share prefernce to store UI status
+
+
                 // find view by ID
                 RadioButton radioButton = (RadioButton) findViewById(checkId);
                 drinkName = radioButton.getText().toString();
@@ -125,8 +143,8 @@ public class MainActivity extends AppCompatActivity {
 
         //2016.04.28
         // click listView and show Toast.
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener(){
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id){
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 order order = (order) parent.getAdapter().getItem(position);
                 //2016.04.28: Snackbar and Toast do the same thing.
                 //          Snackbar provide more application for Toast.
@@ -138,6 +156,7 @@ public class MainActivity extends AppCompatActivity {
         });
         setupListView();
         setupSpinner();
+
     }
 
     //4/25: delete check box
@@ -169,6 +188,10 @@ public class MainActivity extends AppCompatActivity {
         order.storeInfo = (String) spinner.getSelectedItem(); // get & store the store information
 
         orders.add(order);
+
+        //S:2016.0428: write/Read file
+        Utils.writeFile(this, "notes", order.note+'\n'); //write file name:"ontes" to order.note
+        //E:2016.0428: write/Read file
 
         editText2.setText(""); // clear the text at edit line
         setupListView();

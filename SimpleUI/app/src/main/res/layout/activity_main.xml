@@ -11,6 +11,12 @@
     android:onClick="click"
     android:focusable="false">
 
+    <ProgressBar
+        style="?android:attr/progressBarStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/progressBar" />
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -38,7 +44,8 @@
         android:singleLine="true"
         android:layout_below="@+id/textView"
         android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
+        android:layout_alignParentEnd="true"
+        android:hint="Input the Name" />
 
     <RadioGroup
         android:layout_width="match_parent"
