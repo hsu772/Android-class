@@ -1,10 +1,12 @@
 package com.example.user.simpleui;
 
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -13,6 +15,7 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -100,6 +103,19 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        //2016.04.28
+        // click listView and show Toast.
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener(){
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id){
+                order order = (order) parent.getAdapter().getItem(position);
+                //2016.04.28: Snackbar and Toast do the same thing.
+                //          Snackbar provide more application for Toast.
+                //2016.04.28: Toast.makeText(MainActivity.this, order.note, Toast.LENGTH_LONG).show();//2016.0428: show the feedback (order.note) to user
+                //Snackbar.make(view, order.note, Snackbar.LENGTH_LONG).setAction().show();
+                Snackbar.make(view, order.note, Snackbar.LENGTH_LONG).show();
+
+            }
+        });
         setupListView();
         setupSpinner();
     }
