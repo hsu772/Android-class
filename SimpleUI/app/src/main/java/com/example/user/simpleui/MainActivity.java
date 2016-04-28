@@ -20,14 +20,19 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.List;
+
+import io.realm.Realm;
+import io.realm.RealmConfiguration;
+import io.realm.RealmResults;
 
 public class MainActivity extends AppCompatActivity {
 
     TextView textView2; //variable name for text
     EditText editText2; // the variable name for edit
     RadioGroup radioGroup; // capture RadioGroup, before create the radio, need to create the RadioGroup first.
-    ArrayList<order> orders;
-    String drinkName = "black tea"; //set default sex
+    List<Order> orders;
+    String drinkName; //set default sex
     String note=""; // empty string for text field
     CheckBox checkBox; // capture checkbox
 
@@ -38,6 +43,9 @@ public class MainActivity extends AppCompatActivity {
     SharedPreferences sp;
     SharedPreferences.Editor editor;
     //E:2016.0428: share prefernce to store UI status
+
+    //E:2016.0428: realm
+    Realm realm;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,11 +74,11 @@ public class MainActivity extends AppCompatActivity {
         sp = getSharedPreferences("setting", Context.MODE_PRIVATE);     //"setting" is the name of dictory, MODE_PRIVATE: support R/W
         editor = sp.edit(); //like the pencile to write the content to the dictory of "setting".
 
-        //S:2016.0428: write/Read file
-        String data = Utils.readFile(this, "notes").split("\n"); // use "\n" to seperate the string.
-        //textView2.setText(Utils.readFile(this, "notes"));
-        textView2.setText(data[0]);
-        //E:2016.0428: write/Read file
+        // Create a RealmConfiguration which is to locate Realm file in package's "files" directory.
+        RealmConfiguration realmConfig = new RealmConfiguration.Builder(this).build();
+        // Get a Realm instance for this thread
+        realm = Realm.getInstance(realmConfig);
+
 
         editText2.setText(sp.getString("editText", "")); // find the key "editText", it will response content "world".
         //E:2016.0428: share prefernce to store UI status
@@ -123,8 +131,11 @@ public class MainActivity extends AppCompatActivity {
         });
 
         //S:2016.0428: share prefernce to store UI status, store the radio button.
-        radioGroup.check(sp.getInt("radioGroup",R.id.blackTeaRadioButton));
+        int checkId = sp.getInt("radioGroup", R.id.blackTeaRadioButton);
+        radioGroup.check(checkId);
         //E:2016.0428: share prefernce to store UI status
+        RadioButton radioButton = (RadioButton) findViewById(checkId);
+        drinkName = radioButton.getText().toString();
 
         // For RadioGroup, select "sex"
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
@@ -145,12 +156,26 @@ public class MainActivity extends AppCompatActivity {
         // click listView and show Toast.
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                order order = (order) parent.getAdapter().getItem(position);
+                Order order = (Order) parent.getAdapter().getItem(position);
                 //2016.04.28: Snackbar and Toast do the same thing.
                 //          Snackbar provide more application for Toast.
                 //2016.04.28: Toast.makeText(MainActivity.this, order.note, Toast.LENGTH_LONG).show();//2016.0428: show the feedback (order.note) to user
                 //Snackbar.make(view, order.note, Snackbar.LENGTH_LONG).setAction().show();
-                Snackbar.make(view, order.note, Snackbar.LENGTH_LONG).show();
+                Snackbar.make(view, order.getNote(), Snackbar.LENGTH_LONG).show();
+
+            }
+        });
+
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+//                Order order = (Order) parent.getAdapter().getItem(position);
+
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
 
             }
         });
@@ -162,7 +187,9 @@ public class MainActivity extends AppCompatActivity {
     //4/25: delete check box
     //4/25: set the text to list
     void setupListView(){
-        OrderAdapter adapter = new OrderAdapter(this, orders);
+        RealmResults results = realm.allObjects(Order.class); //list order
+
+        OrderAdapter adapter = new OrderAdapter(this, (List<Order>) results.subList(0, results.size()));
         listView. setAdapter(adapter);
     }
 
@@ -182,15 +209,23 @@ public class MainActivity extends AppCompatActivity {
         textView2.setText(text);
 
 
-        order order = new order();
-        order.drinkName = drinkName;
-        order.note = note; //
-        order.storeInfo = (String) spinner.getSelectedItem(); // get & store the store information
+        Order order = new Order();
+        order.setDrinkName(drinkName);// = drinkName;
+        order.setNote(note);// = note;
+        order.setStoreInfo((String) spinner.getSelectedItem());
 
-        orders.add(order);
+
+
+
+        // Persist your data easily
+        realm.beginTransaction();
+        realm.copyToRealm(order);
+        realm.commitTransaction();
+
+        //orders.add(order);// not need for realm.
 
         //S:2016.0428: write/Read file
-        Utils.writeFile(this, "notes", order.note+'\n'); //write file name:"ontes" to order.note
+        //Utils.writeFile(this, "notes", order.note+'\n'); //write file name:"ontes" to order.note
         //E:2016.0428: write/Read file
 
         editText2.setText(""); // clear the text at edit line

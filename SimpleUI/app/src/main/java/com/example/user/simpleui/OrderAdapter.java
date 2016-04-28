@@ -11,17 +11,18 @@ import android.widget.TextView;
 import org.w3c.dom.Text;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by user on 2016/4/25.
  * This class is for simple_list_item_1
  */
 public class OrderAdapter extends BaseAdapter{
-    ArrayList<order> orders; //store the order
+    List<Order> orders; //store the order
     LayoutInflater inflater; //auto score in and score out
 
     // capture order auto
-    public OrderAdapter(Context context, ArrayList <order> orders){
+    public OrderAdapter(Context context, List<Order> orders){
         this.inflater = LayoutInflater.from(context);
         this.orders = orders;
     }
@@ -69,10 +70,9 @@ public class OrderAdapter extends BaseAdapter{
             holder = (Holder) convertView.getTag();
         }
 
-
-        holder.drinkName.setText(orders.get(position).drinkName);
-        holder.note.setText(orders.get(position).note);
-        holder.storeInfo.setText(orders.get(position).storeInfo);
+        holder.drinkName.setText(orders.get(position).getDrinkName());
+        holder.note.setText(orders.get(position).getNote());
+        holder.storeInfo.setText(orders.get(position).getStoreInfo());
 
         return convertView;
     }
