@@ -1,5 +1,7 @@
 package com.example.user.simpleui;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -32,6 +34,11 @@ public class MainActivity extends AppCompatActivity {
     ListView listView; //capture listview
     Spinner spinner;
 
+    //S:2016.0428: share prefernce to store UI status, use to store the information of user, there is a size limitation.
+    SharedPreferences sp;
+    SharedPreferences.Editor editor;
+    //E:2016.0428: share prefernce to store UI status
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState); // default code
@@ -55,10 +62,23 @@ public class MainActivity extends AppCompatActivity {
 
         orders = new ArrayList<>(); //4/25: capture order list
 
+        //S:2016.0428: share prefernce to store UI status, use to store the information of user, there is a size limitation.
+        sp = getSharedPreferences("setting", Context.MODE_PRIVATE);     //"setting" is the name of dictory, MODE_PRIVATE: support R/W
+        editor = sp.edit(); //like the pencile to write the content to the dictory of "setting".
+        editText2.setText(sp.getString("editText", "")); // find the key "editText", it will response content "world".
+        //E:2016.0428: share prefernce to store UI status
+
         // 4/20:These code for real keyboard, detect the action from "Enter"
         // 4/20:onKeyListener only can detect the "Enter" on the Keyboard, it cannot detect the virtual keyboard on the phone or pad (virtual device)
         editText2.setOnKeyListener(new View.OnKeyListener() {
             public boolean onKey(View v, int keyCode, KeyEvent event) {
+
+                //S:2016.0428: share prefernce to store UI status
+                String text = editText2.getText().toString();
+                editor.putString("editText", text);
+                editor.apply(); // need "apply()" for write the content.
+                //E:2016.0428: share prefernce to store UI status
+
                 // need to check the ACTION_DOWN for finish the key type
                 // Also need to check the KEYCODE_ENTER to detect the "Enter"
                 if (keyCode == KeyEvent.KEYCODE_ENTER && event.getAction() == KeyEvent.ACTION_DOWN) //"KEYCODE_ENTER" for detect the "Enter", "ACTION_DONE" for detect the press "key"(down then up)
