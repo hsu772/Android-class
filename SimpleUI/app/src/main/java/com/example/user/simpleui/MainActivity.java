@@ -80,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
         realm = Realm.getInstance(realmConfig);
 
 
-        editText2.setText(sp.getString("editText", "")); // find the key "editText", it will response content "world".
+        editText2.setText(sp.getString("editText", "")); // find the key (id) "editText", it will response content "world".
         //E:2016.0428: share prefernce to store UI status
 
 
@@ -92,7 +92,7 @@ public class MainActivity extends AppCompatActivity {
 
                 //S:2016.0428: share prefernce to store UI status
                 String text = editText2.getText().toString();
-                editor.putString("editText", text);
+                editor.putString("editText", text);  // put the text to id "editText"
                 editor.apply(); // need "apply()" for write the content.
                 //E:2016.0428: share prefernce to store UI status
 
@@ -131,7 +131,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         //S:2016.0428: share prefernce to store UI status, store the radio button.
-        int checkId = sp.getInt("radioGroup", R.id.blackTeaRadioButton);
+        int checkId = sp.getInt("RadioGroup", R.id.blackTeaRadioButton); // get the id "RadioGroup"
         radioGroup.check(checkId);
         //E:2016.0428: share prefernce to store UI status
         RadioButton radioButton = (RadioButton) findViewById(checkId);
@@ -141,8 +141,8 @@ public class MainActivity extends AppCompatActivity {
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             public void onCheckedChanged(RadioGroup group, int checkId) {
                 //S:2016.0428: share prefernce to store UI status
-                editor.putInt("radioGroup", checkId);
-                editor.apply();
+                editor.putInt("RadioGroup", checkId); // put the value to id "RadioGroup"
+                editor.apply(); // apply the value
                 //E:2016.0428: share prefernce to store UI status
 
 
@@ -166,11 +166,14 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        //S:2016.04.29: homework-1
+        int spinId = sp.getInt("spinner", R.id.spinner); // get the id "spinner"
+        
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-//                Order order = (Order) parent.getAdapter().getItem(position);
-
+                editor.putInt ("spinner", spinId);  // put the text to id "editText"
+                editor.apply(); // need "apply()" for write the content.
 
             }
 
@@ -179,6 +182,8 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+        //E:2016.04.29: homework-1
+        
         setupListView();
         setupSpinner();
 
