@@ -40,7 +40,7 @@ public class OrderAdapter extends BaseAdapter{
     @Override
     // for use in internet, not use in this case.
     public long getItemId(int position) {
-        return 0;
+        return position;
     }
 
     @Override
