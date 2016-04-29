@@ -189,7 +189,7 @@ public class MainActivity extends AppCompatActivity {
     void setupListView(){
         RealmResults results = realm.allObjects(Order.class); //list order
 
-        OrderAdapter adapter = new OrderAdapter(this, (List<Order>) results.subList(0, results.size()));
+        OrderAdapter adapter = new OrderAdapter(this, results.subList(0, results.size()));
         listView. setAdapter(adapter);
     }
 
