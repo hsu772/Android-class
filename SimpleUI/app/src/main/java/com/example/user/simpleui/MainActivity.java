@@ -37,6 +37,7 @@ public class MainActivity extends AppCompatActivity {
     String drinkName; //set default sex
     String note=""; // empty string for text field
     CheckBox checkBox; // capture checkbox
+    int pos;
 
     ListView listView; //capture listview
     Spinner spinner;
@@ -171,15 +172,17 @@ public class MainActivity extends AppCompatActivity {
 
         //S:2016.04.29: homework-1
         int spinId = sp.getInt("spinner", R.id.spinner); // get the id "spinner"
-        
+
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                // editor.putInt ("spinner", spinId);  // put the text to id "editText"
                // editor.apply(); // need "apply()" for write the content.
 
-                //editor.putInt("storeInfo",parent.getSelectedItemPosition());
-                //editor.apply();
+                editor.putInt("storeInfo",parent.getSelectedItemPosition());
+                pos = parent.getSelectedItemPosition();
+                Log.d("debug","postion is "+ pos);
+                editor.apply();
 
             }
 
@@ -190,6 +193,8 @@ public class MainActivity extends AppCompatActivity {
 
         });
         //E:2016.04.29: homework-1
+       // Log.d("debug","postion 2 is "+ pos);
+        //spinner.setSelection(pos);
         //spinner.setSelection();
         setupListView();
         setupSpinner();
