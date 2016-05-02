@@ -1,10 +1,12 @@
 package com.example.user.simpleui;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -51,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState); // default code
         setContentView(R.layout.activity_main); // default code
-
+        Log.d("debug", "Main Activity OnCreate"); // 2016.05.02:create debug
         /* The "textView" of "R.id.textView" map to the id "textView" (at activity_main.xml)
          * The code try to get the id name "textView"
          */
@@ -130,27 +132,28 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        //2016.0502: common
         //S:2016.0428: share prefernce to store UI status, store the radio button.
-        int checkId = sp.getInt("RadioGroup", R.id.blackTeaRadioButton); // get the id "RadioGroup"
-        radioGroup.check(checkId);
-        //E:2016.0428: share prefernce to store UI status
-        RadioButton radioButton = (RadioButton) findViewById(checkId);
-        drinkName = radioButton.getText().toString();
-
-        // For RadioGroup, select "sex"
-        radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            public void onCheckedChanged(RadioGroup group, int checkId) {
-                //S:2016.0428: share prefernce to store UI status
-                editor.putInt("RadioGroup", checkId); // put the value to id "RadioGroup"
-                editor.apply(); // apply the value
-                //E:2016.0428: share prefernce to store UI status
-
-
-                // find view by ID
-                RadioButton radioButton = (RadioButton) findViewById(checkId);
-                drinkName = radioButton.getText().toString();
-            }
-        });
+//        int checkId = sp.getInt("RadioGroup", R.id.blackTeaRadioButton); // get the id "RadioGroup"
+//        radioGroup.check(checkId);
+//        //E:2016.0428: share prefernce to store UI status
+//        RadioButton radioButton = (RadioButton) findViewById(checkId);
+//        drinkName = radioButton.getText().toString();
+//
+//        // For RadioGroup, select "sex"
+//        radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+//            public void onCheckedChanged(RadioGroup group, int checkId) {
+//                //S:2016.0428: share prefernce to store UI status
+//                editor.putInt("RadioGroup", checkId); // put the value to id "RadioGroup"
+//                editor.apply(); // apply the value
+//                //E:2016.0428: share prefernce to store UI status
+//
+//
+//                // find view by ID
+//                RadioButton radioButton = (RadioButton) findViewById(checkId);
+//                drinkName = radioButton.getText().toString();
+//            }
+//        });
 
         //2016.04.28
         // click listView and show Toast.
@@ -172,8 +175,11 @@ public class MainActivity extends AppCompatActivity {
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                editor.putInt ("spinner", spinId);  // put the text to id "editText"
-                editor.apply(); // need "apply()" for write the content.
+               // editor.putInt ("spinner", spinId);  // put the text to id "editText"
+               // editor.apply(); // need "apply()" for write the content.
+
+                //editor.putInt("storeInfo",parent.getSelectedItemPosition());
+                //editor.apply();
 
             }
 
@@ -181,9 +187,10 @@ public class MainActivity extends AppCompatActivity {
             public void onNothingSelected(AdapterView<?> parent) {
 
             }
+
         });
         //E:2016.04.29: homework-1
-        
+        //spinner.setSelection();
         setupListView();
         setupSpinner();
 
@@ -237,5 +244,55 @@ public class MainActivity extends AppCompatActivity {
         setupListView();
     }
 
+    //S:2016.05.02, show onStart()/onResume()/ onPause()
 
+    //S:2016.05.02, Create button function "goToMenu"
+    public void goToMenu(View view){
+        Intent intent = new Intent(); // intent: the bridge between active and activity
+        intent.setClass(this, DrinkMenuActivity.class);
+        
+        startActivity(intent); //startActivity will help to call other activity that define at "intent"
+                
+    }
+
+
+    //E:2016.05.02, Create button function "goToMenu" 
+    
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Log.d("debug","Main Activity onStart");
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.d("debug", "Main Activity onResume");
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Log.d("debug","Main Activity onPause");
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Log.d("debug", "Main Activity onStop");
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.d("debug", "Main Activity onDestroy");
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        Log.d("debug", "Main Activity onRestart");
+    }
+
+    //E:2016.05.02, show onStart()/onResume()/ onPause()
 }
