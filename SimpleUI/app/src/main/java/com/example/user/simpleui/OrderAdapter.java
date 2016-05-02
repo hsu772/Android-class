@@ -8,6 +8,9 @@ import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.w3c.dom.Text;
 
 import java.util.ArrayList;
@@ -50,6 +53,7 @@ public class OrderAdapter extends BaseAdapter{
     public View getView(int position, View convertView, ViewGroup parent) {
 
         Holder holder;
+        //int total;
 
         if(convertView == null){ // if converView is null, mean it's the first time to get the converView.
             convertView = inflater.inflate(R.layout.listview_item, null);
@@ -59,7 +63,7 @@ public class OrderAdapter extends BaseAdapter{
 
            // TextView drinkName = (TextView) convertView.findViewById(R.id.drinkName);
            // TextView note = (TextView) convertView.findViewById(R.id.note);
-            holder.drinkName = (TextView) convertView.findViewById(R.id.drinkName);
+            holder.drinkNumber = (TextView) convertView.findViewById(R.id.drinkNumber);
             holder.note = (TextView) convertView.findViewById(R.id.note);
             holder.storeInfo = (TextView) convertView.findViewById(R.id.store);
 
@@ -69,8 +73,23 @@ public class OrderAdapter extends BaseAdapter{
         else{
             holder = (Holder) convertView.getTag();
         }
+        int total=0;
+        try {
+            JSONArray jsonArray = new JSONArray(orders.get(position).getMenuResults());
 
-        holder.drinkName.setText(orders.get(position).getDrinkName());
+            for (int i=0; i< jsonArray.length();i++) {
+                JSONObject menu = jsonArray.getJSONObject(i);
+
+                total += menu.getInt("m");
+                total += menu.getInt("l");
+
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+       // holder.drinkNumber.setText(orders.get(position).getMenuResults());
+        holder.drinkNumber.setText(String.valueOf(total));
         holder.note.setText(orders.get(position).getNote());
         holder.storeInfo.setText(orders.get(position).getStoreInfo());
 
@@ -79,7 +98,7 @@ public class OrderAdapter extends BaseAdapter{
 
     // creat class Holder for capture UI
     class Holder {
-        TextView drinkName;
+        TextView drinkNumber;
         TextView note;
         TextView storeInfo;
     }

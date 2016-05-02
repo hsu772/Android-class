@@ -1,5 +1,6 @@
 package com.example.user.simpleui;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -43,19 +44,25 @@ public class DrinkMenuActivity extends AppCompatActivity {
 
     //S:2016.05.02, Create button function "done"
     public void done (View view){
+        Intent intent = new Intent();
+        intent.putExtra("result", getData().toString()); // intent 只接收 int, boolin, 所以把 data 需轉成toString();
+
+        setResult(RESULT_OK, intent); // set "RESTULT_OK", 會把介質留在這邊
+
+        finish();
 
     }
 
-    public JSONArray getData (){ //收集 data for done(), JSON like sharePerference,
+    public JSONArray getData () { //收集 data for done(), JSON like sharePerference,
         LinearLayout rootLinearLayout = (LinearLayout) findViewById(R.id.root); //取得 linearLayout (id=root), 再取得 button
         JSONArray jsonArray = new JSONArray(); // 在JSONArray 中包 JSON Object.
 
         for (int i=1; i < 4; i++) {
-            LinearLayout linearLayout = rootLinearLayout.getChildAt(i); //getChildAt 取得 child
+            LinearLayout linearLayout = (LinearLayout) rootLinearLayout.getChildAt(i);////getChildAt 取得 child
 
-            TextView textView = (TextView) LinearLayout.getChildAt(0);
-            Button mButton = (Button) LinearLayout.getChildAt(1);
-            Button lButton = (Button) LinearLayout.getChildAt(2);
+            TextView textView = (TextView) linearLayout.getChildAt(0);
+            Button mButton = (Button) linearLayout.getChildAt(1);
+            Button lButton = (Button) linearLayout.getChildAt(2);
 
             String drinkName = textView.getText().toString(); //取得 textView 的名字
             int m = Integer. parseInt(mButton.getText().toString()); //取得 mButton 的字串, 並轉成 int

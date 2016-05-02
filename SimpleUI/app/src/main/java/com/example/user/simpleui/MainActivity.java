@@ -30,17 +30,20 @@ import io.realm.RealmResults;
 
 public class MainActivity extends AppCompatActivity {
 
+    private static final int REQUEST_CODE_MENU_ACTIVITY = 0; //代表這個 activity, 必須是常數
+
     TextView textView2; //variable name for text
     EditText editText2; // the variable name for edit
     RadioGroup radioGroup; // capture RadioGroup, before create the radio, need to create the RadioGroup first.
     List<Order> orders;
-    String drinkName; //set default sex
+    String  drinkName; //set default sex
     String note=""; // empty string for text field
     CheckBox checkBox; // capture checkbox
     int pos;
 
     ListView listView; //capture listview
     Spinner spinner;
+    String menuResults; //2016.0502
 
     //S:2016.0428: share prefernce to store UI status, use to store the information of user, there is a size limitation.
     SharedPreferences sp;
@@ -71,6 +74,8 @@ public class MainActivity extends AppCompatActivity {
         listView = (ListView) findViewById(R.id.listView);
         spinner = (Spinner) findViewById(R.id.spinner);
 
+
+
         orders = new ArrayList<>(); //4/25: capture order list
 
         //S:2016.0428: share prefernce to store UI status, use to store the information of user, there is a size limitation.
@@ -78,7 +83,7 @@ public class MainActivity extends AppCompatActivity {
         editor = sp.edit(); //like the pencile to write the content to the dictory of "setting".
 
         // Create a RealmConfiguration which is to locate Realm file in package's "files" directory.
-        RealmConfiguration realmConfig = new RealmConfiguration.Builder(this).build();
+        RealmConfiguration realmConfig = new RealmConfiguration.Builder(this).deleteRealmIfMigrationNeeded().build();
         // Get a Realm instance for this thread
         realm = Realm.getInstance(realmConfig);
 
@@ -171,17 +176,19 @@ public class MainActivity extends AppCompatActivity {
         });
 
         //S:2016.04.29: homework-1
-        int spinId = sp.getInt("spinner", R.id.spinner); // get the id "spinner"
-
+        int spinId = sp.getInt("spinner", 0);//R.id.spinner); // get the id "spinner"
+        Log.d("debug","spinId is "+ spinId);
+        spinner.setSelection(spinId);
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                // editor.putInt ("spinner", spinId);  // put the text to id "editText"
                // editor.apply(); // need "apply()" for write the content.
 
-                editor.putInt("storeInfo",parent.getSelectedItemPosition());
-                pos = parent.getSelectedItemPosition();
-                Log.d("debug","postion is "+ pos);
+
+                //pos = parent.getSelectedItemPosition();
+                editor.putInt("spinner",position);
+                Log.d("debug","postion is "+ position);
                 editor.apply();
 
             }
@@ -194,7 +201,7 @@ public class MainActivity extends AppCompatActivity {
         });
         //E:2016.04.29: homework-1
        // Log.d("debug","postion 2 is "+ pos);
-        //spinner.setSelection(pos);
+
         //spinner.setSelection();
         setupListView();
         setupSpinner();
@@ -227,7 +234,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         Order order = new Order();
-        order.setDrinkName(drinkName);// = drinkName;
+        order.setMenuResults(menuResults);// = drinkName;
         order.setNote(note);// = note;
         order.setStoreInfo((String) spinner.getSelectedItem());
 
@@ -246,6 +253,8 @@ public class MainActivity extends AppCompatActivity {
         //E:2016.0428: write/Read file
 
         editText2.setText(""); // clear the text at edit line
+
+        menuResults = ""; //
         setupListView();
     }
 
@@ -255,13 +264,29 @@ public class MainActivity extends AppCompatActivity {
     public void goToMenu(View view){
         Intent intent = new Intent(); // intent: the bridge between active and activity
         intent.setClass(this, DrinkMenuActivity.class);
-        
-        startActivity(intent); //startActivity will help to call other activity that define at "intent"
+
+        //標註記號給哪個 activity, REQUEST_CODE_MENU_ACTIVITY = 0
+        startActivityForResult(intent, REQUEST_CODE_MENU_ACTIVITY); //startActivity will help to call other activity that define at "intent"
                 
     }
 
+    @Override
+    //requestCode 對應到 REQUEST_CODE_MENU_ACTIVITY
+    // data: 對應到之前 activity 留下來的內容
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
 
-    //E:2016.05.02, Create button function "goToMenu" 
+        if (requestCode == REQUEST_CODE_MENU_ACTIVITY){
+
+            if (resultCode == RESULT_OK) {
+                menuResults = data.getStringExtra("result"); // 從 "result" 取回 data, 放到 menuResults
+
+
+            }
+        }
+    }
+
+    //E:2016.05.02, Create button function "goToMenu"
     
     @Override
     protected void onStart() {

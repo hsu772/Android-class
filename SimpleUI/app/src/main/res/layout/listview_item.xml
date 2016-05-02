@@ -5,31 +5,30 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="drink name"
-        android:id="@+id/drinkName"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="30dp" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="note"
         android:id="@+id/note"
-        android:layout_below="@+id/drinkName"
-        android:layout_alignRight="@+id/drinkName"
-        android:layout_alignEnd="@+id/drinkName"
-        android:layout_alignParentStart="true" />
+        android:layout_below="@+id/drinkNumber"
+        android:layout_alignRight="@+id/drinkNumber"
+        android:layout_alignEnd="@+id/drinkNumber"
+         />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Store"
         android:id="@+id/store"
-        android:layout_alignBottom="@+id/note"
+        android:layout_below="@+id/note"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="0"
+        android:id="@+id/drinkNumber"
+        android:layout_alignParentTop="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true" />
 </RelativeLayout>

@@ -14,7 +14,8 @@ public class order {
 */
 public class Order extends RealmObject{
     private String note;
-    private String drinkName;
+    //private String drinkName;
+    private String menuResults="";
     private String storeInfo;
 
     public String getNote() {
@@ -25,12 +26,12 @@ public class Order extends RealmObject{
         this.note = note;
     }
 
-    public String getDrinkName() {
-        return drinkName;
+    public String getMenuResults() {
+        return menuResults;
     }
 
-    public void setDrinkName(String drinkName) {
-        this.drinkName = drinkName;
+    public void setMenuResults(String menuResults) {
+        this.menuResults = menuResults;
     }
 
     public String getStoreInfo() {
