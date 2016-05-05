@@ -21,6 +21,12 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.parse.FindCallback;
+import com.parse.ParseException;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
+import com.parse.SaveCallback;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
 
     ListView listView; //capture listview
     Spinner spinner;
-    String menuResults; //2016.0502
+    String menuResults=""; //2016.0502
 
     //S:2016.0428: share prefernce to store UI status, use to store the information of user, there is a size limitation.
     SharedPreferences sp;
@@ -58,6 +64,28 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState); // default code
         setContentView(R.layout.activity_main); // default code
         Log.d("debug", "Main Activity OnCreate"); // 2016.05.02:create debug
+
+        //S: 2016.05.05:Parse server test
+/*
+        ParseObject testObject = new ParseObject("HomeworkParse"); // "TestObject" is class name
+        testObject.put("sid", "許漢裕"); // "foo" is field name, "bar" is content
+        testObject.put("email", "hy772@live.com"); // "foo" is field name, "bar" is content
+        testObject.saveInBackground(new SaveCallback() { //
+            @Override
+            public void done(ParseException e) {
+
+                if (e != null){
+                    //Toast.makeText(MainActivity.this, "home: save fall", Toast.LENGTH_LONG).show(); // print error when connect server fail
+                    Toast.makeText(MainActivity.this, e.toString(), Toast.LENGTH_LONG).show(); // print error when connect server fail
+                }
+                else {
+                    Toast.makeText(MainActivity.this, "home: save success", Toast.LENGTH_LONG).show(); // print OK when connect server success
+                }
+            }
+        });
+*/
+        //E: 2016.05.05:Parse server
+
         /* The "textView" of "R.id.textView" map to the id "textView" (at activity_main.xml)
          * The code try to get the id name "textView"
          */
@@ -79,13 +107,17 @@ public class MainActivity extends AppCompatActivity {
         orders = new ArrayList<>(); //4/25: capture order list
 
         //S:2016.0428: share prefernce to store UI status, use to store the information of user, there is a size limitation.
-        sp = getSharedPreferences("setting", Context.MODE_PRIVATE);     //"setting" is the name of dictory, MODE_PRIVATE: support R/W
-        editor = sp.edit(); //like the pencile to write the content to the dictory of "setting".
+        sp = getSharedPreferences("setting", Context.MODE_PRIVATE);     //"setting" is the name of dictionary, MODE_PRIVATE: support R/W
+        editor = sp.edit(); //like the pencil to write the content to the dictionary of "setting".
 
         // Create a RealmConfiguration which is to locate Realm file in package's "files" directory.
         RealmConfiguration realmConfig = new RealmConfiguration.Builder(this).deleteRealmIfMigrationNeeded().build();
+
+        Realm.setDefaultConfiguration(realmConfig);//2016.0505, to get instance
         // Get a Realm instance for this thread
-        realm = Realm.getInstance(realmConfig);
+        //realm = Realm.getInstance(realmConfig); //2016.0505, comment
+        realm = Realm.getDefaultInstance(); //2016.0505, get default instance
+
 
 
         editText2.setText(sp.getString("editText", "")); // find the key (id) "editText", it will response content "world".
@@ -211,10 +243,45 @@ public class MainActivity extends AppCompatActivity {
     //4/25: delete check box
     //4/25: set the text to list
     void setupListView(){
+/*        //2016.0505: comment
         RealmResults results = realm.allObjects(Order.class); //list order
 
         OrderAdapter adapter = new OrderAdapter(this, results.subList(0, results.size()));
         listView. setAdapter(adapter);
+*/
+        ParseQuery<ParseObject> query = new ParseQuery<ParseObject>("Order"); // define how to get
+        query.findInBackground(new FindCallback<ParseObject>() {
+            @Override
+            public void done(List<ParseObject> objects, ParseException e) {
+                if (e != null){ // check does get the data ok or fail
+                    Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
+
+                    Realm realm = Realm.getDefaultInstance();
+                   // get back the original data
+                    RealmResults results = realm.allObjects(Order.class); //list order
+
+                    OrderAdapter adapter = new OrderAdapter(MainActivity.this, results.subList(0, results.size()));
+                    listView. setAdapter(adapter);
+                    //
+                    return;// return and do nothing if fail
+                }
+
+                //S:2016.0505, use objects to get order
+                List<Order> orders = new ArrayList<Order>(); // get order
+
+                for (int i=0; i<objects.size(); i++){ // to get back the order
+                    Order order = new Order();
+                    order.setNote(objects.get(i).getString("note"));// get the data from "note" field
+                    order.setStoreInfo(objects.get(i).getString("storeInfo"));// get the data from "storeInfo" field
+                    order.setMenuResults(objects.get(i).getString("menuResults"));// get the data from "menuResults" field
+                    orders.add(order);// save to order to orders.
+
+                }
+
+                OrderAdapter adapter = new OrderAdapter(MainActivity.this, orders);
+                listView.setAdapter(adapter);
+            }
+        });
     }
 
     void setupSpinner(){
@@ -239,23 +306,64 @@ public class MainActivity extends AppCompatActivity {
         order.setStoreInfo((String) spinner.getSelectedItem());
 
 
+//        realm.beginTransaction();
+//        realm.copyToRealm(order);
+//        realm.commitTransaction();
+//        realm.close(); //2016.0505
 
 
-        // Persist your data easily
-        realm.beginTransaction();
-        realm.copyToRealm(order);
-        realm.commitTransaction();
 
         //orders.add(order);// not need for realm.
+//2016.0505, replace below call back function
+        SaveCallbackWithRealm callbackWithRealm = new SaveCallbackWithRealm(order, new SaveCallback() {
+            @Override
+            public void done(ParseException e) {
+                if (e != null){
+                    Toast.makeText(MainActivity.this, "Save Fail", Toast.LENGTH_LONG).show();
+                }
+
+                editText2.setText("");
+                menuResults = ""; //
+                setupListView();
+            }
+        });
+        order.saveToRemote(callbackWithRealm);
+//E:2016.0505, replace below call back function
+  /*
+        //S:2016.0505, create a save call back function
+        order.saveToRemote(new SaveCallback() {
+            @Override
+            public void done(ParseException e) {
+
+                if (e != null){
+                    Toast.makeText(MainActivity.this, "Save Fail", Toast.LENGTH_LONG).show();
+                }
+                //else {
+                    //S: 2016.04.28
+                    editText2.setText(""); // clear the text at edit line
+
+                    menuResults = ""; //
+                //S:2016.0505, move to saveToRemote
+  /*              Realm realm = Realm.getDefaultInstance(); // get default instance
+                // 2016.0428: Persist your data easily
+                realm.beginTransaction();
+                realm.copyToRealm(order);
+                realm.commitTransaction();
+                realm.close(); //2016.0505
+                //E:2016.0505, move to saveToRemote
+*/
+                //setupListView();
+                    //E:2016.04.28
+                //}
+ //           }
+  //      }); */
+        //E:2016.0505, create a save call back function
 
         //S:2016.0428: write/Read file
         //Utils.writeFile(this, "notes", order.note+'\n'); //write file name:"ontes" to order.note
         //E:2016.0428: write/Read file
 
-        editText2.setText(""); // clear the text at edit line
 
-        menuResults = ""; //
-        setupListView();
     }
 
     //S:2016.05.02, show onStart()/onResume()/ onPause()
@@ -315,6 +423,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        realm.close(); // 2016.0505, close instance
         Log.d("debug", "Main Activity onDestroy");
     }
 
