@@ -206,7 +206,8 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
-
+        setupSpinner();
+        setupListView();
         //S:2016.04.29: homework-1
         int spinId = sp.getInt("spinner", 0);//R.id.spinner); // get the id "spinner"
         Log.d("debug","spinId is "+ spinId);
@@ -235,8 +236,8 @@ public class MainActivity extends AppCompatActivity {
        // Log.d("debug","postion 2 is "+ pos);
 
         //spinner.setSelection();
-        setupListView();
-        setupSpinner();
+
+
 
     }
 
