@@ -18,6 +18,7 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -206,6 +207,21 @@ public class MainActivity extends AppCompatActivity {
 //                drinkName = radioButton.getText().toString();
 //            }
 //        });
+
+        //S: 2016.0509, for checkbox, image
+        checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(isChecked){
+                    photoImageView.setVisibility(View.GONE);
+                }
+                else{
+                    photoImageView.setVisibility(View.VISIBLE);
+                }
+
+            }
+        });
+        //E: 2016.0509, for checkbox, image
 
         //2016.04.28
         // click listView and show Toast.
