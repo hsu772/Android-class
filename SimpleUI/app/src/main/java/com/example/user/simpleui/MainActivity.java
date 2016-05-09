@@ -8,6 +8,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
@@ -423,7 +425,26 @@ public class MainActivity extends AppCompatActivity {
     }
 
     //E:2016.05.02, Create button function "goToMenu"
-    
+
+    //S: 2016.0509, for photo action
+    public boolean onCreateOptionsMenu(Menu menu){
+
+        getMenuInflater().inflate(R.menu.main_menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+
+    public boolean onOptionsItemSelected(MenuItem item){
+        int id = item.getItemId();
+
+        if (id==R.id.action_take_photo){
+            Toast.makeText(this, "Take Photo", Toast.LENGTH_LONG).show();
+        }
+
+        return super. onOptionsItemSelected(item);
+    }
+    //E:2016.0509
+
     @Override
     protected void onStart() {
         super.onStart();
