@@ -208,6 +208,8 @@ public class MainActivity extends AppCompatActivity {
         });
         setupSpinner();
         setupListView();
+
+        //test...
         //S:2016.04.29: homework-1
         int spinId = sp.getInt("spinner", 0);//R.id.spinner); // get the id "spinner"
         Log.d("debug","spinId is "+ spinId);
@@ -250,6 +252,18 @@ public class MainActivity extends AppCompatActivity {
         OrderAdapter adapter = new OrderAdapter(this, results.subList(0, results.size()));
         listView. setAdapter(adapter);
 */
+
+        //S:2016.0509, list local information
+        //Realm realm = Realm.getDefaultInstance(); //2016.0509, mark because this instance can get from onCreate().
+        // get back the original data
+        final RealmResults results = realm.allObjects(Order.class); //list order, need add "final"
+
+        OrderAdapter adapter = new OrderAdapter(MainActivity.this, results.subList(0, results.size()));
+        listView. setAdapter(adapter); // list local information
+
+       //realm.close();//2016.0509, mark for not need here
+        //E:2016.0509
+
         ParseQuery<ParseObject> query = new ParseQuery<ParseObject>("Order"); // define how to get
         query.findInBackground(new FindCallback<ParseObject>() {
             @Override
@@ -257,18 +271,15 @@ public class MainActivity extends AppCompatActivity {
                 if (e != null){ // check does get the data ok or fail
                     Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
 
-                    Realm realm = Realm.getDefaultInstance();
-                   // get back the original data
-                    RealmResults results = realm.allObjects(Order.class); //list order
 
-                    OrderAdapter adapter = new OrderAdapter(MainActivity.this, results.subList(0, results.size()));
-                    listView. setAdapter(adapter);
                     //
                     return;// return and do nothing if fail
                 }
 
                 //S:2016.0505, use objects to get order
                 List<Order> orders = new ArrayList<Order>(); // get order
+
+                Realm realm = Realm.getDefaultInstance(); // get realm
 
                 for (int i=0; i<objects.size(); i++){ // to get back the order
                     Order order = new Order();
@@ -277,7 +288,16 @@ public class MainActivity extends AppCompatActivity {
                     order.setMenuResults(objects.get(i).getString("menuResults"));// get the data from "menuResults" field
                     orders.add(order);// save to order to orders.
 
+                    //compare local & remote data
+                    if (results.size() <= i) // results is for local data, i
+                    {
+                        realm.beginTransaction();
+                        realm.copyToRealm(order);
+                        realm.commitTransaction();
+                    }
+
                 }
+                realm.close(); // close realm
 
                 OrderAdapter adapter = new OrderAdapter(MainActivity.this, orders);
                 listView.setAdapter(adapter);
