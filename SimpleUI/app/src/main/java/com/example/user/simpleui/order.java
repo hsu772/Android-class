@@ -1,5 +1,6 @@
 package com.example.user.simpleui;
 
+import com.parse.ParseFile;
 import com.parse.ParseObject;
 import com.parse.SaveCallback;
 
@@ -22,6 +23,8 @@ public class Order extends RealmObject{
     //private String drinkName;
     private String menuResults="";
     private String storeInfo;
+
+    byte[] photo = null; // don't need to store at Realm
 
     public String getNote() {
         return note;
@@ -55,6 +58,10 @@ public class Order extends RealmObject{
         parseObject.put("storeInfo", storeInfo);
         parseObject.put("menuResults", menuResults);
 
+        if (photo != null){ // if photo is not null.
+            ParseFile file = new ParseFile("photo.png", photo); // use ParseFile to pars large file
+            parseObject.put("photo", file); // upload photo
+        }
         parseObject.saveInBackground(saveCallback); // update to Parse server
     }
     //E: 2016.0505

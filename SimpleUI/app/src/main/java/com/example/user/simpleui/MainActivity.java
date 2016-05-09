@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Build;
 import android.provider.MediaStore;
 import android.support.design.widget.Snackbar;
@@ -48,6 +49,8 @@ public class MainActivity extends AppCompatActivity {
 
     private static final int REQUEST_CODE_MENU_ACTIVITY = 0; //代表這個 activity, 必須是常數
     private static final int REQUEST_CODE_CAMERA_ACTIVITY = 1; //代表camera activity, 必須是常數
+
+    private boolean hasPhoto = false; // 2016.0509, check doest take the photo by camera, default is "false"
 
     TextView textView2; //variable name for text
     EditText editText2; // the variable name for edit
@@ -360,6 +363,20 @@ public class MainActivity extends AppCompatActivity {
         order.setNote(note);// = note;
         order.setStoreInfo((String) spinner.getSelectedItem());
 
+        //S: 2016.0509, if get the photo, upload the photo
+        // photo like byte array, because we use RGB to store the photo information.
+        if(hasPhoto){
+            Uri uri = Utils.getPhotoURI();
+            byte[] photo = Utils.uriToBytes(this, uri);
+
+            if (photo == null) {
+                Log.d("Debug", "Read Photo Fail!");
+            }
+            else {// write the photo to order.
+                order.photo = photo;
+            }
+        }
+        //E: 2016.0509
 
 //        realm.beginTransaction();
 //        realm.copyToRealm(order);
@@ -378,7 +395,10 @@ public class MainActivity extends AppCompatActivity {
                 }
 
                 editText2.setText("");
-                menuResults = ""; //
+                menuResults = "";
+                photoImageView.setImageResource(0); //2016.0509, clear image
+                hasPhoto = false; //2016.0509, set hasphoto to false
+
                 setupListView();
             }
         });
@@ -451,6 +471,7 @@ public class MainActivity extends AppCompatActivity {
         else if (requestCode == REQUEST_CODE_CAMERA_ACTIVITY){ // check request code is for camera
             if(resultCode == RESULT_OK){
                 photoImageView.setImageURI(Utils.getPhotoURI());
+                hasPhoto = true; // record get the photo
             }
         }
         //E: 2016.0509

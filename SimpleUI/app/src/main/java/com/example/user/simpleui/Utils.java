@@ -4,11 +4,13 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Environment;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 
 /**
@@ -65,6 +67,32 @@ public class Utils {
         }
         File file = new File(dir,"simpleUI_photo.png"); // folder name
         return Uri.fromFile(file); //translate file to URI
+
+    }
+
+    // 2016.0509, use context to read/write file
+    public static byte[] uriToBytes (Context context, Uri uri){
+
+        try{
+           InputStream inputStream = context.getContentResolver().openInputStream(uri);
+            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+
+            byte[] buffer = new byte[1024]; // create buffer
+            int len = 0; // record the length of photo
+            while ((len = inputStream.read(buffer)) != -1) {// use while to read the photo, "-1" for end of read
+                byteArrayOutputStream.write(buffer);
+            }
+            return byteArrayOutputStream.toByteArray();// from 2 dimetion to 1 dimention
+        }
+    catch (FileNotFoundException e){
+            e.printStackTrace();
+        }
+        catch (IOException e){
+            e.printStackTrace();
+        }
+
+        return null;
+
 
     }
 }
