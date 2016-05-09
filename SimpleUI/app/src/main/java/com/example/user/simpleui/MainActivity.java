@@ -3,6 +3,9 @@ package com.example.user.simpleui;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.os.Build;
+import android.provider.MediaStore;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -16,6 +19,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.RadioButton;
@@ -32,6 +36,8 @@ import com.parse.SaveCallback;
 
 import java.util.ArrayList;
 import java.util.List;
+//import java.util.jar.Manifest;// 2016.0509, we don't need the Manifest from Java, need Android version
+import android.Manifest;
 
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
@@ -40,6 +46,7 @@ import io.realm.RealmResults;
 public class MainActivity extends AppCompatActivity {
 
     private static final int REQUEST_CODE_MENU_ACTIVITY = 0; //代表這個 activity, 必須是常數
+    private static final int REQUEST_CODE_CAMERA_ACTIVITY = 1; //代表camera activity, 必須是常數
 
     TextView textView2; //variable name for text
     EditText editText2; // the variable name for edit
@@ -55,6 +62,7 @@ public class MainActivity extends AppCompatActivity {
     String menuResults=""; //2016.0502
 
     ProgressBar progressBar;
+    ImageView photoImageView;
 
     //S:2016.0428: share prefernce to store UI status, use to store the information of user, there is a size limitation.
     SharedPreferences sp;
@@ -106,7 +114,8 @@ public class MainActivity extends AppCompatActivity {
         checkBox = (CheckBox)findViewById(R.id.HideCheckbox); 
         listView = (ListView) findViewById(R.id.listView);
         spinner = (Spinner) findViewById(R.id.spinner);
-        progressBar = (ProgressBar) findViewById(R.id.progressBar);
+        progressBar = (ProgressBar) findViewById(R.id.progressBar); //2016.0509, for progress bar
+        photoImageView = (ImageView) findViewById(R.id.imageView); //2016.0509, for image view
 
 
         orders = new ArrayList<>(); //4/25: capture order list
@@ -422,11 +431,19 @@ public class MainActivity extends AppCompatActivity {
 
             }
         }
+        //S: 2016.0509,
+        else if (requestCode == REQUEST_CODE_CAMERA_ACTIVITY){ // check request code is for camera
+            if(resultCode == RESULT_OK){
+                photoImageView.setImageURI(Utils.getPhotoURI());
+            }
+        }
+        //E: 2016.0509
     }
 
     //E:2016.05.02, Create button function "goToMenu"
 
     //S: 2016.0509, for photo action
+    //onCreateOptionsMenu 是當你按下手機的 Menu 時會觸發的動作
     public boolean onCreateOptionsMenu(Menu menu){
 
         getMenuInflater().inflate(R.menu.main_menu, menu);
@@ -434,14 +451,45 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    //onOptionsItemSelected 是當你按下跳出來的 Menu 選項時會觸發的動作
+    //先觸發 onCreateOptionsMenu 才有 onOptionsItemselected
     public boolean onOptionsItemSelected(MenuItem item){
         int id = item.getItemId();
 
+        // show
         if (id==R.id.action_take_photo){
             Toast.makeText(this, "Take Photo", Toast.LENGTH_LONG).show();
+            goToCamera();
         }
 
         return super. onOptionsItemSelected(item);
+    }
+
+    // need check the permission w/ user, if user not approvide,
+    protected void goToCamera(){
+
+        if (Build.VERSION.SDK_INT >=23) // if version > 23
+        {
+            // check does user permission
+            if(checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED){
+                //request the permssion w/ user
+                requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 0); // String{} can request many permission
+                return;
+            }
+        }
+
+
+        /*
+        * 在「Intent」這樣的事件處理觀念裡，Android 試圖將事件解釋為「應用程式的意圖」或是「使用者的意圖」，並試著去解釋該意圖的目的，
+        * 若 Android 系統本身能理解應用程式的意圖，便會「自行」去處理該意圖所應執行的工作。
+        * Android的做法是，讓每個意圖（Intent）都帶有一個動作（action），並根據不同的動作去行動。
+        *
+        */
+        //call camera's activity
+        Intent intent = new Intent();
+        intent.setAction(MediaStore.ACTION_IMAGE_CAPTURE); //ACTION_IMAGE_CAPTURE: take one photo and back
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, Utils.getPhotoURI()); // put photo
+        startActivityForResult(intent, REQUEST_CODE_CAMERA_ACTIVITY); // need assign request code, REQUEST_CODE_CAMERA_ACTIVITY=1
     }
     //E:2016.0509
 

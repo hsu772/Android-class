@@ -36,7 +36,7 @@
         android:layout_alignParentEnd="false"
         android:enabled="true"
         android:onClick="click"
-        android:layout_below="@+id/spinner" />
+        android:layout_below="@+id/imageView" />
 
     <EditText
         android:layout_width="fill_parent"
@@ -80,10 +80,10 @@
     <CheckBox
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hide Sex"
+        android:text="Hide photo"
         android:id="@+id/HideCheckbox"
         android:checked="false"
-        android:enabled="false"
+        android:enabled="true"
         android:layout_above="@+id/listView"
         android:layout_alignRight="@+id/listView"
         android:layout_alignEnd="@+id/listView"
@@ -115,9 +115,17 @@
         android:layout_height="wrap_content"
         android:text="Menu"
         android:id="@+id/button2"
-        android:layout_below="@+id/spinner"
+        android:layout_below="@+id/imageView"
         android:layout_toRightOf="@+id/button"
         android:layout_toEndOf="@+id/button"
         android:onClick="goToMenu" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/imageView"
+        android:layout_below="@+id/spinner"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
 
 </RelativeLayout>
