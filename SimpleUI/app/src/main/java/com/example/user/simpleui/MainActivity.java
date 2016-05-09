@@ -15,6 +15,7 @@ import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
@@ -50,6 +51,8 @@ public class MainActivity extends AppCompatActivity {
     ListView listView; //capture listview
     Spinner spinner;
     String menuResults=""; //2016.0502
+
+    ProgressBar progressBar;
 
     //S:2016.0428: share prefernce to store UI status, use to store the information of user, there is a size limitation.
     SharedPreferences sp;
@@ -101,7 +104,7 @@ public class MainActivity extends AppCompatActivity {
         checkBox = (CheckBox)findViewById(R.id.HideCheckbox); 
         listView = (ListView) findViewById(R.id.listView);
         spinner = (Spinner) findViewById(R.id.spinner);
-
+        progressBar = (ProgressBar) findViewById(R.id.progressBar);
 
 
         orders = new ArrayList<>(); //4/25: capture order list
@@ -252,6 +255,7 @@ public class MainActivity extends AppCompatActivity {
         OrderAdapter adapter = new OrderAdapter(this, results.subList(0, results.size()));
         listView. setAdapter(adapter);
 */
+        progressBar.setVisibility(View.VISIBLE);//2016.0509
 
         //S:2016.0509, list local information
         //Realm realm = Realm.getDefaultInstance(); //2016.0509, mark because this instance can get from onCreate().
@@ -271,6 +275,7 @@ public class MainActivity extends AppCompatActivity {
                 if (e != null){ // check does get the data ok or fail
                     Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
 
+                    progressBar.setVisibility(View.GONE); //2016.0509, disable progress bar when finish
 
                     //
                     return;// return and do nothing if fail
@@ -298,6 +303,8 @@ public class MainActivity extends AppCompatActivity {
 
                 }
                 realm.close(); // close realm
+
+                progressBar.setVisibility(View.GONE); //2016.0509, disable progress bar if not exception
 
                 OrderAdapter adapter = new OrderAdapter(MainActivity.this, orders);
                 listView.setAdapter(adapter);

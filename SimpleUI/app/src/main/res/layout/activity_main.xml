@@ -15,7 +15,10 @@
         style="?android:attr/progressBarStyleSmall"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/progressBar" />
+        android:id="@+id/progressBar"
+        android:layout_toEndOf="@+id/button2"
+        android:layout_below="@+id/button2"
+        android:layout_toRightOf="@+id/button2" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -116,4 +119,5 @@
         android:layout_toRightOf="@+id/button"
         android:layout_toEndOf="@+id/button"
         android:onClick="goToMenu" />
+
 </RelativeLayout>
