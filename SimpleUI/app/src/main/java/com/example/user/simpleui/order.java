@@ -26,6 +26,8 @@ public class Order extends RealmObject{
 
     byte[] photo = null; // don't need to store at Realm
 
+    String photoURL=""; //2016.0512, to get the photo's URL
+
     public String getNote() {
         return note;
     }

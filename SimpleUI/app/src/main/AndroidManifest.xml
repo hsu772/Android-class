@@ -2,13 +2,17 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.user.simpleui">
 
-    <uses-permission android:name="android.permission.INTERNET"></uses-permission> //permission user to connect to internet
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"></uses-permission>//2016.0509, permission user to write storage
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"></uses-permission>//2016.0509, permission user to read storage
-    <uses-feature android:name="android.hardware.camera2"></uses-feature>
+    <uses-permission android:name="android.permission.INTERNET" />
+    //permission user to connect to internet
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    //2016.0509, permission user to write storage
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    //2016.0509, permission user to read storage
+    <uses-feature android:name="android.hardware.camera2" />
+
     <application
-        android:allowBackup="true"
         android:name=".SimpleUIApplication"
+        android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
@@ -20,7 +24,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".DrinkMenuActivity"></activity>
+        <activity android:name=".DrinkMenuActivity" />
+        <activity android:name=".OrderDetailActivity"></activity>
     </application>
 
 </manifest>

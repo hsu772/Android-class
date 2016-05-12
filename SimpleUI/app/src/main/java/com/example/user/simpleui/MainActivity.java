@@ -238,6 +238,10 @@ public class MainActivity extends AppCompatActivity {
                 //          Snackbar provide more application for Toast.
                 //2016.04.28: Toast.makeText(MainActivity.this, order.note, Toast.LENGTH_LONG).show();//2016.0428: show the feedback (order.note) to user
                 //Snackbar.make(view, order.note, Snackbar.LENGTH_LONG).setAction().show();
+
+                //S:2016.0512
+                goToDetailOrder(order);
+                //E: 2016.0512
                 Snackbar.make(view, order.getNote(), Snackbar.LENGTH_LONG).show();
 
             }
@@ -324,6 +328,11 @@ public class MainActivity extends AppCompatActivity {
                     order.setNote(objects.get(i).getString("note"));// get the data from "note" field
                     order.setStoreInfo(objects.get(i).getString("storeInfo"));// get the data from "storeInfo" field
                     order.setMenuResults(objects.get(i).getString("menuResults"));// get the data from "menuResults" field
+
+
+                    if (objects.get(i).getParseFile("photo") != null){ //2016.0512, check does the photo exist
+                        order.photoURL = objects.get(i).getParseFile("photo").getUrl(); //2016.0512, get photo's URL
+                    }
                     orders.add(order);// save to order to orders.
 
                     //compare local & remote data
@@ -458,6 +467,21 @@ public class MainActivity extends AppCompatActivity {
         startActivityForResult(intent, REQUEST_CODE_MENU_ACTIVITY); //startActivity will help to call other activity that define at "intent"
                 
     }
+
+    //S:2016.0512, call OrderDetail activity to get detail order.
+    public void goToDetailOrder(Order order){
+       Intent intent = new Intent(); ///call activity
+
+        intent.setClass(this, OrderDetailActivity.class);
+
+        intent.putExtra("note", order.getNote());
+        intent.putExtra("storeInfo", order.getStoreInfo());
+        intent.putExtra("menuResults", order.getMenuResults());
+        intent.putExtra("photoURL", order.photoURL);
+        startActivity(intent);
+
+    }
+    //E:2016.0512
 
     @Override
     //requestCode 對應到 REQUEST_CODE_MENU_ACTIVITY
