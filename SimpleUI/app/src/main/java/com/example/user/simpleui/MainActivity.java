@@ -1,5 +1,6 @@
 package com.example.user.simpleui;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -66,6 +67,7 @@ public class MainActivity extends AppCompatActivity {
     String menuResults=""; //2016.0502
 
     ProgressBar progressBar;
+    ProgressDialog progressDialog; //2016.0512, show bar when load image
     ImageView photoImageView;
 
     //S:2016.0428: share prefernce to store UI status, use to store the information of user, there is a size limitation.
@@ -121,6 +123,7 @@ public class MainActivity extends AppCompatActivity {
         progressBar = (ProgressBar) findViewById(R.id.progressBar); //2016.0509, for progress bar
         photoImageView = (ImageView) findViewById(R.id.imageView); //2016.0509, for image view
 
+        progressDialog = new ProgressDialog(this); //2016.0512,
 
         orders = new ArrayList<>(); //4/25: capture order list
 
@@ -351,6 +354,8 @@ public class MainActivity extends AppCompatActivity {
 
     public void click(View view) //The name "click" will map to Properties: onClick  (at activity_main.xml)
     {
+        progressDialog.setTitle("Loading....");//2016.0512, show text "loading..."
+        progressDialog.show(); //2016.0512, show text
         note = editText2.getText().toString(); // get the string from if "editText" and translate the text to string format and assign to variable "note".
 
         String text = note;
@@ -398,6 +403,7 @@ public class MainActivity extends AppCompatActivity {
                 menuResults = "";
                 photoImageView.setImageResource(0); //2016.0509, clear image
                 hasPhoto = false; //2016.0509, set hasphoto to false
+                progressDialog.dismiss();//2016.0512, disable the text "loading..."
 
                 setupListView();
             }
