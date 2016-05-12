@@ -82,7 +82,16 @@ public class OrderDetailActivity extends AppCompatActivity {
 
     // use task to get the lat, lng
     // AsyncTask 用意在簡化背景執行 Thread 程式碼的撰寫。
-    //要使用 AsyncTask，必定要建立一個繼承自 AsyncTask 的子類別
+    // 要使用 AsyncTask，必定要建立一個繼承自 AsyncTask 的子類別,並傳入 3 項資料：
+    //    Params -- 要執行 doInBackground() 時傳入的參數，數量可以不止一個
+    //    Progress -- doInBackground() 執行過程中回傳給 UI thread 的資料，數量可以不止一個
+    //    Rsesult -- 傳回執行結果， 若您沒有參數要傳入，則填入 Void (注意 V 為大寫)。
+
+    //    AsyncTask 的運作有 4 個階段：
+    //    onPreExecute -- AsyncTask 執行前的準備工作，例如畫面上顯示進度表，
+    //    doInBackground -- 實際要執行的程式碼就是寫在這裡，
+    //    onProgressUpdate -- 用來顯示目前的進度，
+    //    onPostExecute -- 執行完的結果 - Result 會傳入這裡。
     private static class GeoCodingTask extends AsyncTask<String, Void, Bitmap>{
 
         ImageView imageView;

@@ -108,7 +108,7 @@ public class Utils {
 
     }
 
-    //S: 2016.0512
+    //S: 2016.0512,
     public static byte[] urlToBytes(String urlString){
         try {
             URL url = new URL(urlString);
