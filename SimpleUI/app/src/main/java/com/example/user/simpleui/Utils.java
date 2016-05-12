@@ -1,8 +1,13 @@
 package com.example.user.simpleui;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Environment;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -11,7 +16,14 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
 import java.net.URI;
+import java.net.URL;
+import java.net.URLConnection;
+import java.net.URLEncoder;
+
+import io.realm.internal.Util;
 
 /**
  * Created by user on 2016/4/28.
@@ -95,6 +107,92 @@ public class Utils {
 
 
     }
+
+    //S: 2016.0512
+    public static byte[] urlToBytes(String urlString){
+        try {
+            URL url = new URL(urlString);
+            URLConnection connection = url.openConnection();
+            InputStream inputStream = connection.getInputStream();
+            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+
+            byte[] buffer = new byte[1024];
+            int len=0;
+
+            while ((len=inputStream.read(buffer)) != -1){// read data stream
+
+                byteArrayOutputStream.write(buffer, 0, len);
+            }
+
+            return byteArrayOutputStream.toByteArray();
+
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+    //E: 2016.0512
+
+    //S: 2016.0512. get the location from google map
+
+    public static String getGeoCodingUrl(String address){
+        try {
+            address = URLEncoder.encode(address, "utf-8");//translate
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+
+        String url = "http://maps.google.com/maps/api/geocode/json?address=taipei"+ address;
+        return  url;
+    }
+
+    public static double[] addressToLatLng(String address){
+
+        String url = Utils.getGeoCodingUrl(address);
+        byte[] bytes =Utils.urlToBytes(url);
+
+        if(bytes != null){
+            String result = new String(bytes);
+
+            try {
+                JSONObject object = new JSONObject(result);
+
+                if (object.getString("status").equals("OK")){ // check "status" is "OK" or not?
+
+                    JSONObject location = object.getJSONArray("results")
+                            .getJSONObject(0)
+                            .getJSONObject("geometry")
+                            .getJSONObject("location");
+                    double lat = location.getDouble("lat");
+                    double lng = location.getDouble("lng");
+
+                    return new double []{lat,lng}; // double array
+
+                }
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return null;
+    }
+
+    public static Bitmap getStaticMap(double[] latlng){
+
+        String center = latlng[0] +"," + latlng[1];
+
+        String staticMapUrl = "https://maps.googleapis.com/maps/api/staticmap?center="+ center + "&zoom=17&size=640x400";
+        byte[] bytes = Utils.urlToBytes(staticMapUrl);
+        if(bytes != null) {
+            Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0 , bytes.length);
+            return bitmap;
+        }
+        return null;
+    }
+    //E: 2016.0512. get the location of earth
 }
 
 
