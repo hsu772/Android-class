@@ -355,7 +355,28 @@ public class MainActivity extends AppCompatActivity {
     }
 
     void setupSpinner(){
-        String[] data = getResources().getStringArray(R.array.storeInfo);
+        //S: Homework #3
+        final ArrayList<String> data= new ArrayList<String>();
+                final ParseQuery<ParseObject> query = ParseQuery.getQuery("StoreInfo");
+                query.findInBackground(new FindCallback<ParseObject>() {
+
+                    @Override
+                    public void done(List<ParseObject> postList, ParseException e) {
+                        if (e == null) {
+                            // If there are results, update the list of posts
+                            // and notify the adapter
+                            for (int i=0;i<postList.size();i++) {
+                                Order order = new Order();
+                                //order.setNote(postList.get(i).getString("note"));
+                                String name= (String) postList.get(i).getString("StoreName");
+
+                                data.add(i,name);
+                            }
+                        }
+            }
+        });
+        //E: Homework #3
+        //String[] data = getResources().getStringArray(R.array.storeInfo);
         ArrayAdapter<String> adapter = new ArrayAdapter<String> (this, android.R.layout.simple_spinner_dropdown_item,data);
 
         spinner.setAdapter(adapter);
