@@ -357,7 +357,7 @@ public class MainActivity extends AppCompatActivity {
 
     void setupSpinner(){
         //S: Homework #3
-        /*
+
         final ArrayList<String> data= new ArrayList<String>();
                 final ParseQuery<ParseObject> query = ParseQuery.getQuery("StoreInfo");
                 query.findInBackground(new FindCallback<ParseObject>() {
@@ -367,24 +367,26 @@ public class MainActivity extends AppCompatActivity {
                         if (e == null) {
                             // If there are results, update the list of posts
                             // and notify the adapter
-                            for (int i=0;i<postList.size();i++) {
+                            for (int i = 0; i < postList.size(); i++) {
                                 Order order = new Order();
 
-                                String name= (String) postList.get(i).getString("StoreName");
+                                String name = (String) postList.get(i).getString("StoreName");
 
-                                data.add(i,name);
+                                data.add(i, name);
                             }
                         }
-            }
-        });
+                        ArrayAdapter<String> adapter = new ArrayAdapter<String>(MainActivity.this, android.R.layout.simple_spinner_dropdown_item, data);
+                        spinner.setAdapter(adapter);
+                    }
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<String> (MainActivity.this, android.R.layout.simple_spinner_dropdown_item,data);
-        spinner.setAdapter(adapter);
-        */
+                });
+
+
+
         //E: Homework #3
 
         //S:2016.0516.parse store info and address at show at spinner
-
+/*
         ParseQuery<ParseObject> query = new ParseQuery<ParseObject>("StoreInfo");
         query.findInBackground(new FindCallback<ParseObject>() {
             @Override
@@ -404,7 +406,7 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
-
+*/
         //E:2016.0516.parse store info and address at show at spinner
 
         //S: 2016.0516, marked
