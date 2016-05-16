@@ -3,6 +3,7 @@ package com.example.user.simpleui;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.media.Image;
 import android.os.AsyncTask;
 import android.os.SystemClock;
@@ -11,11 +12,26 @@ import android.os.Bundle;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.directions.route.AbstractRouting;
+import com.directions.route.Route;
+import com.directions.route.RouteException;
+import com.directions.route.Routing;
+import com.directions.route.RoutingListener;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
 
 //2016.0512, to receive intent
 public class OrderDetailActivity extends AppCompatActivity {
@@ -27,6 +43,8 @@ public class OrderDetailActivity extends AppCompatActivity {
     ImageView mapImageView; // 2016.0516, for show map of address
     String storeName; // 2016.0516, for show map of address
     String address;// 2016.0516, for show map of address
+
+    MapFragment mapFragment; //2016.0516, for map fragment
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,7 +109,18 @@ public class OrderDetailActivity extends AppCompatActivity {
 // E not write as this way, it will occupted the memory size
         }
 
-        (new GeoCodingTask(mapImageView)).execute(address);//2016.0516, to get the address and get the map
+
+
+        //S: 2016.0516, need use getFragmentManager to get the ID, it's not same as view.
+        mapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.googleMapFragment);
+        mapFragment.getMapAsync(new OnMapReadyCallback() { //get back the Google map
+            @Override
+            public void onMapReady(GoogleMap googleMap) {
+                (new GeoCodingTask(googleMap)).execute(address);//2016.0516, to get the address and get the map
+
+            }
+        });
+        //E: 2016.0516, need use getFragmentManager to get the ID, it's not same as view.
 
         //S: 2016.0516, test thread occupt memory, we can see the memory increase
 //        for (int i=0;i< 10;i++){
@@ -120,32 +149,99 @@ public class OrderDetailActivity extends AppCompatActivity {
     //    doInBackground -- 實際要執行的程式碼就是寫在這裡，
     //    onProgressUpdate -- 用來顯示目前的進度，
     //    onPostExecute -- 執行完的結果 - Result 會傳入這裡。
-    private static class GeoCodingTask extends AsyncTask<String, Void, Bitmap>{
+    //private static class GeoCodingTask extends AsyncTask<String, Void, Bitmap>{
+        private static class GeoCodingTask extends AsyncTask<String, Void, double[]>{
+        GoogleMap googleMap;
+        private ArrayList<Polyline> polylines;
 
-        ImageView imageView;
+        //ImageView imageView;
         //doInBackground -- 實際要執行的程式碼就是寫在這裡
-        protected Bitmap doInBackground(String... params){
+        protected double[] doInBackground(String... params){
             String address = params[0];
             double[] latlng = Utils.addressToLatLng(address);
 
-            return Utils.getStaticMap(latlng);
+            //return Utils.getStaticMap(latlng);
+            return  latlng; //2016.0516
         }
 
         //onPostExecute -- 執行完的結果 - Result 會傳入這裡
-        protected void onPostExecute(Bitmap bitmap){
+        protected void onPostExecute(double[] latlng){//(Bitmap bitmap){
 
+            LatLng storeLocation = new LatLng(latlng[0], latlng[1]);
+
+            //S: 2016.0516, show map on top view
+            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(storeLocation, 17)); //LatLng(latlng[0], latlng[1])是經緯度
+            googleMap.addMarker(new MarkerOptions().position(storeLocation));//2016.0516, add marker at google map
+
+            LatLng start = new LatLng(25.0186348, 121.538379);// assign start location.
+            Routing routing = new Routing.Builder() //2016.0516, from aewson git, route the user to the marker (target)
+                                    .travelMode(AbstractRouting.TravelMode.WALKING)
+                                    .waypoints(start, storeLocation)
+                                    .withListener(new RoutingListener() {
+                                        @Override
+                                        public void onRoutingFailure(RouteException e) {
+
+                                        }
+
+                                        @Override
+                                        public void onRoutingStart() {
+
+                                        }
+
+                                        @Override
+                                        public void onRoutingSuccess(ArrayList<Route> routes, int index) {
+                                            if(polylines !=null) {
+                                                for (Polyline poly : polylines) {
+                                                    poly.remove();
+                                                }
+                                            }
+
+                                            polylines = new ArrayList<>();
+                                            //add route(s) to the map.
+                                            for (int i = 0; i <routes.size(); i++) {
+
+                                                //In case of more than 5 alternative routes
+
+                                                PolylineOptions polyOptions = new PolylineOptions();
+                                                polyOptions.color(Color.BLUE); // set color
+                                                polyOptions.width(10 + i * 3); // set width
+                                                polyOptions.addAll(routes.get(i).getPoints()); // get the location of point of line
+                                                Polyline polyline = googleMap.addPolyline(polyOptions);
+                                                polylines.add(polyline); //
+
+//            Toast.makeText(getApplicationContext(),"Route "+ (i+1) +": distance - "+ routes.get(i).getDistanceValue()+": duration - "+ routes.get(i).getDurationValue(),Toast.LENGTH_SHORT).show();
+                                            }
+
+                                        }
+
+                                        @Override
+                                        public void onRoutingCancelled() {
+
+                                        }
+                                    }).build();
+
+
+                                routing.execute(); // execute the draw the line on the map
+
+
+
+            //E: 2016.0516
+/* //2016.0516, mark
             super.onPostExecute(bitmap);
             if(bitmap != null){ // this bitmap come from above function
-                imageView.setImageBitmap(bitmap);
+                googleMap.setImageBitmap(bitmap);
             }
+*/
         }
 
-        public GeoCodingTask(ImageView imageView){this.imageView = imageView;}
+        //public GeoCodingTask(ImageView imageView){this.imageView = imageView;} //2016.0516
+        public GeoCodingTask(GoogleMap googleMap){this.googleMap = googleMap;} // 2016.0516, apply google map to the Imageview
     }
 
     private static class  ImageLoadingTask extends AsyncTask<String, Void, Bitmap>{
 
         ImageView imageView;
+        GoogleMap googleMap;
 
         protected Bitmap doInBackground (String... params){
 

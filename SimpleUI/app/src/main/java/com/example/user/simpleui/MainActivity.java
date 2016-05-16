@@ -378,12 +378,13 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-//        ArrayAdapter<String> adapter = new ArrayAdapter<String> (this, android.R.layout.simple_spinner_dropdown_item,data);
-//        spinner.setAdapter(adapter);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String> (MainActivity.this, android.R.layout.simple_spinner_dropdown_item,data);
+        spinner.setAdapter(adapter);
         */
         //E: Homework #3
 
-        //S:2016.0516.
+        //S:2016.0516.parse store info and address at show at spinner
+
         ParseQuery<ParseObject> query = new ParseQuery<ParseObject>("StoreInfo");
         query.findInBackground(new FindCallback<ParseObject>() {
             @Override
@@ -403,7 +404,8 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
-        //E:2016.0516.
+
+        //E:2016.0516.parse store info and address at show at spinner
 
         //S: 2016.0516, marked
 //        String[] data = getResources().getStringArray(R.array.storeInfo);
