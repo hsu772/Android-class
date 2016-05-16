@@ -174,7 +174,7 @@ public class OrderDetailActivity extends AppCompatActivity {
             googleMap.addMarker(new MarkerOptions().position(storeLocation));//2016.0516, add marker at google map
 
             LatLng start = new LatLng(25.0186348, 121.538379);// assign start location.
-            Routing routing = new Routing.Builder() //2016.0516, from aewson git, route the user to the marker (target)
+            Routing routing = new Routing.Builder() //2016.0516, from awesome git, route the user to the marker (target)
                                     .travelMode(AbstractRouting.TravelMode.WALKING)
                                     .waypoints(start, storeLocation)
                                     .withListener(new RoutingListener() {

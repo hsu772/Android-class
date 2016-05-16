@@ -369,7 +369,7 @@ public class MainActivity extends AppCompatActivity {
                             // and notify the adapter
                             for (int i=0;i<postList.size();i++) {
                                 Order order = new Order();
-                                //order.setNote(postList.get(i).getString("note"));
+
                                 String name= (String) postList.get(i).getString("StoreName");
 
                                 data.add(i,name);
