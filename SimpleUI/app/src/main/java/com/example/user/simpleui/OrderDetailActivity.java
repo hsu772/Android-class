@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.Image;
 import android.os.AsyncTask;
+import android.os.SystemClock;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.ImageView;
@@ -23,6 +24,9 @@ public class OrderDetailActivity extends AppCompatActivity {
     TextView storeInfo;
     TextView menuResults;
     ImageView photo;
+    ImageView mapImageView; // 2016.0516, for show map of address
+    String storeName; // 2016.0516, for show map of address
+    String address;// 2016.0516, for show map of address
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,10 +37,19 @@ public class OrderDetailActivity extends AppCompatActivity {
         storeInfo = (TextView) findViewById(R.id.storeInfo);
         menuResults = (TextView) findViewById(R.id.menuResults);
         photo = (ImageView) findViewById(R.id.photoImageView);
+        mapImageView = (ImageView) findViewById(R.id.mapImageView);// 2016.0516
 
         Intent intent = getIntent(); //get intent
         note.setText(intent.getStringExtra("note"));
         storeInfo.setText(intent.getStringExtra("storeInfo"));
+
+        //S: 2016.0516, saperate the string w/ ","
+        String[] info = intent.getStringExtra("storeInfo").split(",");
+
+        storeName = info[0];
+        address = info [1];
+
+        //E: 2016.0516,
 
         //translate the menuResult to JasonArray
         String results = intent.getStringExtra("menuResults");
@@ -57,8 +70,8 @@ public class OrderDetailActivity extends AppCompatActivity {
         if (!url.equals("")) {// if image exist, load picture
             //Picasso.with(this).load(url).into(photo);
 
-            //(new ImageLoadingTask(photo)).execute(url);
-            (new GeoCodingTask(photo)).execute("台北市羅斯路四段一號");
+            (new ImageLoadingTask(photo)).execute(url);
+            // (new GeoCodingTask(photo)).execute("台北市羅斯福路四段一號");
 
 //S: not write as this way, it will occupted the memory size
 //            for (int i = 0; i < 10; i++) {
@@ -77,6 +90,21 @@ public class OrderDetailActivity extends AppCompatActivity {
 //            }
 // E not write as this way, it will occupted the memory size
         }
+
+        (new GeoCodingTask(mapImageView)).execute(address);//2016.0516, to get the address and get the map
+
+        //S: 2016.0516, test thread occupt memory, we can see the memory increase
+//        for (int i=0;i< 10;i++){
+//            Thread t = new Thread(new Runnable() {
+//                @Override
+//                public void run() {
+//                    while (true){
+//                        SystemClock.sleep(1000);
+//                    }
+//                }
+//            });
+//        }
+        //S: 2016.0516
 
     }
 

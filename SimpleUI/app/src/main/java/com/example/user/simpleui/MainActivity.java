@@ -246,8 +246,9 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
-        setupSpinner();
+
         setupListView();
+        setupSpinner();
 
         //test...
         //S:2016.04.29: homework-1
@@ -309,7 +310,7 @@ public class MainActivity extends AppCompatActivity {
         query.findInBackground(new FindCallback<ParseObject>() {
             @Override
             public void done(List<ParseObject> objects, ParseException e) {
-                if (e != null){ // check does get the data ok or fail
+                if (e != null) { // check does get the data ok or fail
                     Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
 
                     progressBar.setVisibility(View.GONE); //2016.0509, disable progress bar when finish
@@ -323,14 +324,14 @@ public class MainActivity extends AppCompatActivity {
 
                 Realm realm = Realm.getDefaultInstance(); // get realm
 
-                for (int i=0; i<objects.size(); i++){ // to get back the order
+                for (int i = 0; i < objects.size(); i++) { // to get back the order
                     Order order = new Order();
                     order.setNote(objects.get(i).getString("note"));// get the data from "note" field
                     order.setStoreInfo(objects.get(i).getString("storeInfo"));// get the data from "storeInfo" field
                     order.setMenuResults(objects.get(i).getString("menuResults"));// get the data from "menuResults" field
 
 
-                    if (objects.get(i).getParseFile("photo") != null){ //2016.0512, check does the photo exist
+                    if (objects.get(i).getParseFile("photo") != null) { //2016.0512, check does the photo exist
                         order.photoURL = objects.get(i).getParseFile("photo").getUrl(); //2016.0512, get photo's URL
                     }
                     orders.add(order);// save to order to orders.
@@ -356,6 +357,7 @@ public class MainActivity extends AppCompatActivity {
 
     void setupSpinner(){
         //S: Homework #3
+        /*
         final ArrayList<String> data= new ArrayList<String>();
                 final ParseQuery<ParseObject> query = ParseQuery.getQuery("StoreInfo");
                 query.findInBackground(new FindCallback<ParseObject>() {
@@ -375,11 +377,39 @@ public class MainActivity extends AppCompatActivity {
                         }
             }
         });
-        //E: Homework #3
-        //String[] data = getResources().getStringArray(R.array.storeInfo);
-        ArrayAdapter<String> adapter = new ArrayAdapter<String> (this, android.R.layout.simple_spinner_dropdown_item,data);
 
-        spinner.setAdapter(adapter);
+//        ArrayAdapter<String> adapter = new ArrayAdapter<String> (this, android.R.layout.simple_spinner_dropdown_item,data);
+//        spinner.setAdapter(adapter);
+        */
+        //E: Homework #3
+
+        //S:2016.0516.
+        ParseQuery<ParseObject> query = new ParseQuery<ParseObject>("StoreInfo");
+        query.findInBackground(new FindCallback<ParseObject>() {
+            @Override
+            public void done(List<ParseObject> objects, ParseException e) {
+                if (e != null || objects == null){
+                    return;
+                }
+
+                    String[] storeInfo = new String[objects.size()];
+                    for (int i=0; i< objects.size();i++){
+                        ParseObject object = objects.get(i);
+                        storeInfo[i] = object.getString("StoreName")+","+object.getString("Address");
+                    }
+                    ArrayAdapter<String> adapter = new ArrayAdapter<String> (MainActivity.this, android.R.layout.simple_spinner_dropdown_item,storeInfo);
+
+                    spinner.setAdapter(adapter);
+
+            }
+        });
+        //E:2016.0516.
+
+        //S: 2016.0516, marked
+//        String[] data = getResources().getStringArray(R.array.storeInfo);
+//        ArrayAdapter<String> adapter = new ArrayAdapter<String> (this, android.R.layout.simple_spinner_dropdown_item,data);
+//
+//        spinner.setAdapter(adapter);
     }
 
     public void click(View view) //The name "click" will map to Properties: onClick  (at activity_main.xml)
