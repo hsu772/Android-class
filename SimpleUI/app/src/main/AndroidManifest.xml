@@ -7,8 +7,13 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     //2016.0509, permission user to write storage
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+
     //2016.0509, permission user to read storage
     <uses-feature android:name="android.hardware.camera2" />
+
+
 
     <application
         android:name=".SimpleUIApplication"
@@ -19,7 +24,8 @@
         android:theme="@style/AppTheme">
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyB2Vsl7zVmnt1jP5sofvwrIU1iUgtoAD9Y"/>
+            android:value="AIzaSyAHd-me3FLqIpciEGo6gYFyuW0f_gCQh_o"/>
+        <meta-data android:name="com.facebook.sdk.ApplicationId" android:value="@string/facebook_app_id"/>
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -29,6 +35,12 @@
         </activity>
         <activity android:name=".DrinkMenuActivity" />
         <activity android:name=".OrderDetailActivity"></activity>
+        <activity
+            android:name="com.facebook.FacebookActivity"
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+            android:label="@string/app_name"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+
     </application>
 
 </manifest>

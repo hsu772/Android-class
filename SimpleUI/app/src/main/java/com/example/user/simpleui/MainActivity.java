@@ -31,6 +31,14 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.facebook.AccessToken;
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.GraphRequest;
+import com.facebook.GraphResponse;
+import com.facebook.login.LoginResult;
+import com.facebook.login.widget.LoginButton;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
@@ -41,6 +49,9 @@ import java.util.ArrayList;
 import java.util.List;
 //import java.util.jar.Manifest;// 2016.0509, we don't need the Manifest from Java, need Android version
 import android.Manifest;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
@@ -77,6 +88,7 @@ public class MainActivity extends AppCompatActivity {
 
     //E:2016.0428: realm
     Realm realm;
+    private CallbackManager callbackManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -249,6 +261,7 @@ public class MainActivity extends AppCompatActivity {
 
         setupListView();
         setupSpinner();
+        setupFaceBook();
 
         //test...
         //S:2016.04.29: homework-1
@@ -283,6 +296,49 @@ public class MainActivity extends AppCompatActivity {
 
 
     }
+
+    //S: 2016.0519, for facebook
+    void setupFaceBook(){
+        callbackManager = CallbackManager.Factory.create();
+        LoginButton loginButton = (LoginButton) findViewById(R.id.loginButton);
+        loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
+            @Override
+            public void onSuccess(LoginResult loginResult) {
+                AccessToken accessToken = AccessToken.getCurrentAccessToken();
+                GraphRequest request = GraphRequest.newGraphPathRequest(accessToken // each persion is a graphic
+                        , "/v2.5/me",
+                        new GraphRequest.Callback() {
+                            @Override
+                            public void onCompleted(GraphResponse response) { // response provide the accesstoken the how much right (birthday or phone or address ...) to access
+                                JSONObject object = response.getJSONObject();// use JSONobject to get thd data between different API
+                                try {
+                                    String name = object.getString("name");
+                                    Toast.makeText(MainActivity.this, "Hello " + name, Toast.LENGTH_SHORT).show();
+                                    textView2.setText("Hello " + name);
+                                    Log.d("debug", object.toString());
+
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        });
+                request.executeAsync();
+            }
+
+            @Override
+            public void onCancel() {
+
+            }
+
+            @Override
+            public void onError(FacebookException error) {
+
+            }
+        });
+
+    }
+    //E: 2016.0519, for facebook
+
 
     //4/25: delete check box
     //4/25: set the text to list
@@ -357,7 +413,7 @@ public class MainActivity extends AppCompatActivity {
 
     void setupSpinner(){
         //S: Homework #3
-
+/*
         final ArrayList<String> data= new ArrayList<String>();
                 final ParseQuery<ParseObject> query = ParseQuery.getQuery("StoreInfo");
                 query.findInBackground(new FindCallback<ParseObject>() {
@@ -380,13 +436,11 @@ public class MainActivity extends AppCompatActivity {
                     }
 
                 });
-
-
-
+*/
         //E: Homework #3
 
         //S:2016.0516.parse store info and address at show at spinner
-/*
+
         ParseQuery<ParseObject> query = new ParseQuery<ParseObject>("StoreInfo");
         query.findInBackground(new FindCallback<ParseObject>() {
             @Override
@@ -406,7 +460,7 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
-*/
+
         //E:2016.0516.parse store info and address at show at spinner
 
         //S: 2016.0516, marked
@@ -560,6 +614,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         //E: 2016.0509
+        callbackManager.onActivityResult(requestCode, resultCode, data); //2016.0519, for facebook to receive the callback from onActivity.
     }
 
     //E:2016.05.02, Create button function "goToMenu"

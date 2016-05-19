@@ -31,5 +31,6 @@ dependencies {
     compile 'com.google.android.gms:play-services-maps:8.4.0' //2016.0516, for component of google map
     compile 'com.google.android.gms:play-services-location:8.4.0' //2016.0516, for location of google map
     compile 'com.github.jd-alexander:library:1.1.0' //2016.0516, for route the road for google map
+    compile 'com.facebook.android:facebook-android-sdk:[4,5)'
 
 }

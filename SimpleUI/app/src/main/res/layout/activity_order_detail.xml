@@ -26,7 +26,8 @@
                 android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_centerHorizontal="true">
+                android:layout_centerHorizontal="true"
+                android:id="@+id/linearLayout">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -59,7 +60,7 @@
 
                 <fragment
                     android:layout_width="match_parent"
-                    android:layout_height="400dp"
+                    android:layout_height="348dp"
                     android:name="com.google.android.gms.maps.MapFragment"
                     android:id="@+id/googleMapFragment"
                     android:layout_alignTop="@+id/scrollView"
@@ -68,6 +69,13 @@
                     android:layout_marginTop="73dp" />
 
             </LinearLayout>
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/imageView2"
+                android:layout_alignTop="@+id/linearLayout"
+                android:layout_alignBottom="@+id/linearLayout" />
         </RelativeLayout>
     </ScrollView>
 
